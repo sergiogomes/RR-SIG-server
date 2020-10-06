@@ -31,8 +31,23 @@ const addReign = (id, reign) => {
   }
 };
 
+const changeReady = (id, ready) => {
+  const index = users.findIndex((user) => user.id === id);
+  if (index !== -1) {
+    users[index].ready = ready;
+    return users;
+  }
+};
+
 const getUser = (id) => users.find((user) => user.id === id);
 
 const getUsersInRoom = (room) => users.filter((user) => user.room === room);
 
-module.exports = { addUser, removeUser, getUser, getUsersInRoom, addReign };
+module.exports = {
+  addUser,
+  removeUser,
+  getUser,
+  getUsersInRoom,
+  addReign,
+  changeReady,
+};

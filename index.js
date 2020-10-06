@@ -9,6 +9,7 @@ const {
   getUser,
   getUsersInRoom,
   addReign,
+  changeReady,
 } = require("./users");
 const { getReign } = require("./reigns");
 
@@ -62,6 +63,20 @@ io.on("connection", (socket) => {
     io.to(user.room).emit("message", {
       user: "admin",
       text: `${user.name} chose ${reign.name}.`,
+    });
+    io.to(user.room).emit("roomData", {
+      room: user.room,
+      users: getUsersInRoom(user.room),
+    });
+  });
+
+  socket.on("changeReady", (ready) => {
+    const user = getUser(socket.id);
+    changeReady(socket.id, ready);
+
+    io.to(user.room).emit("message", {
+      user: "admin",
+      text: `${user.name} is ${ready ? "" : "not"} ready.`,
     });
     io.to(user.room).emit("roomData", {
       room: user.room,
