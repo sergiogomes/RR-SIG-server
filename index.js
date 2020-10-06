@@ -3,7 +3,14 @@ const sockectio = require("socket.io");
 const http = require("http");
 const cors = require("cors");
 
-const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
+const {
+  addUser,
+  removeUser,
+  getUser,
+  getUsersInRoom,
+  addReign,
+} = require("./users");
+const { getReign } = require("./reigns");
 
 const PORT = process.env.PORT || 5000;
 
@@ -45,6 +52,21 @@ io.on("connection", (socket) => {
     io.to(user.room).emit("message", { user: user.name, text: message });
 
     callback();
+  });
+
+  socket.on("changeReign", (reignId) => {
+    const user = getUser(socket.id);
+    const reign = getReign(reignId);
+    addReign(socket.id, reignId);
+
+    io.to(user.room).emit("message", {
+      user: "admin",
+      text: `${user.name} chose ${reign.name}.`,
+    });
+    io.to(user.room).emit("roomData", {
+      room: user.room,
+      users: getUsersInRoom(user.room),
+    });
   });
 
   socket.on("disconnect", () => {
